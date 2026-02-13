@@ -6,6 +6,10 @@ from tensorflow.keras.models import load_model
 import joblib
 import os
 from datetime import datetime
+<<<<<<< HEAD
+=======
+from google.generativeai import GenerativeModel
+>>>>>>> 8f71c7d3d8d62942f97cbef1f50e1d674ca82936
 import google.generativeai as genai
 from dataclasses import dataclass
 from typing import List, Optional
@@ -14,8 +18,14 @@ app = Flask(__name__)
 app.secret_key = 'your-secret-key-here'
 
 # Configure Google API
+<<<<<<< HEAD
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 model = genai.GenerativeModel("gemini-flash-lite-latest")
+=======
+os.environ["GOOGLE_API_KEY"] = "AIzaSyAk6qB6gBocLFQ7-u2ARw6ZEwzINj2AJ1c"
+genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+model = GenerativeModel('gemini-2.5-pro')
+>>>>>>> 8f71c7d3d8d62942f97cbef1f50e1d674ca82936
 
 @dataclass
 class DetoxTask:
@@ -208,4 +218,8 @@ def predict():
 
 if __name__ == '__main__':
     load_saved_model()
+<<<<<<< HEAD
     app.run(host="0.0.0.0", port=5000, debug=True)
+=======
+    app.run(debug=True)
+>>>>>>> 8f71c7d3d8d62942f97cbef1f50e1d674ca82936
