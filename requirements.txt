@@ -1,0 +1,8 @@
+flask
+gunicorn
+tensorflow-cpu
+pandas
+numpy
+joblib
+google-generativeai
+gunicorn
