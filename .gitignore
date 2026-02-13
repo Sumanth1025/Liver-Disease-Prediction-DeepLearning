@@ -1,0 +1,14 @@
+# Virtual Environment
+tfenv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Saved models (optional if large)
+*.h5
+
+# OS files
+desktop.ini

@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    /* General Styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        /* Using a placeholder for the body background as it might be controlled by base.html */
+        background-color: #f0f2f5; 
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    /* Main Container */
+    .container {
+        max-width: 900px;
+        margin: 40px auto; /* Added more margin for better centering */
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Header Section */
+    .header {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        padding: 30px;
+        text-align: center;
+        color: white;
+    }
+
+    .header h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .header p {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    /* Form Styles */
+    .form-container {
+        padding: 40px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .form-group {
+        position: relative;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: white;
+        -webkit-appearance: none; /* Removes default Safari styling for select */
+        -moz-appearance: none;    /* Removes default Firefox styling for select */
+        appearance: none;          /* Removes default browser styling for select */
+    }
+    
+    .form-group.gender {
+        position: relative;
+    }
+
+    /* Adding a custom dropdown arrow */
+    .form-group.gender::after {
+        content: '▼';
+        font-size: 1rem;
+        color: #6b7280;
+        position: absolute;
+        right: 20px;
+        top: 50px;
+        pointer-events: none;
+    }
+
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #4f46e5;
+        box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .form-group input:hover,
+    .form-group select:hover {
+        border-color: #9ca3af;
+    }
+
+    .form-group.gender select {
+        cursor: pointer;
+    }
+
+    /* Submit Button */
+    .submit-container {
+        text-align: center;
+        margin-top: 40px;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        padding: 16px 40px;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(79, 70, 229, 0.4);
+    }
+    
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+        width: 100%;
+        height: 4px;
+        background: #e5e7eb;
+        border-radius: 2px;
+        overflow: hidden;
+        margin-bottom: 30px;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        width: 0%;
+        transition: width 0.3s ease;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        body {
+            padding: 10px;
+        }
+        .container {
+            margin: 10px;
+            border-radius: 15px;
+        }
+        .header h1 {
+            font-size: 2rem;
+        }
+        .form-container {
+            padding: 25px;
+        }
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="header">
+        <h1>🏥 Medical Prediction System</h1>
+        <p>Enter patient information for liver health analysis</p>
+    </div>
+
+    <div class="form-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <form id="medicalForm" action="{{ url_for('predict') }}" method="post">
+            <div class="form-grid">
+                
+                <div class="form-group gender">
+                    <label for="gender">👤 Gender</label>
+                    <select name="gender" id="gender" required>
+                        <option value="" disabled selected>Choose gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="age">🎂 Age</label>
+                    <input type="number" name="age" id="age" required min="0" max="120" step="1" placeholder="e.g., 45">
+                </div>
+
+                <div class="form-group">
+                    <label for="total_bilirubin">🟡 Total Bilirubin (mg/dL)</label>
+                    <input type="number" name="total_bilirubin" id="total_bilirubin" required step="0.1" min="0" placeholder="e.g., 0.9">
+                </div>
+
+                <div class="form-group">
+                    <label for="direct_bilirubin">🔶 Direct Bilirubin (mg/dL)</label>
+                    <input type="number" name="direct_bilirubin" id="direct_bilirubin" required step="0.1" min="0" placeholder="e.g., 0.2">
+                </div>
+
+                <div class="form-group">
+                    <label for="alkaline_phosphotase">⚡ Alkaline Phosphotase (U/L)</label>
+                    <input type="number" name="alkaline_phosphotase" id="alkaline_phosphotase" required min="0" placeholder="e.g., 190">
+                </div>
+
+                <div class="form-group">
+                    <label for="alamine_aminotransferase">🧪 Alamine Aminotransferase (U/L)</label>
+                    <input type="number" name="alamine_aminotransferase" id="alamine_aminotransferase" required min="0" placeholder="e.g., 25">
+                </div>
+
+                <div class="form-group">
+                    <label for="aspartate_aminotransferase">🔬 Aspartate Aminotransferase (U/L)</label>
+                    <input type="number" name="aspartate_aminotransferase" id="aspartate_aminotransferase" required min="0" placeholder="e.g., 30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="total_proteins">🥩 Total Proteins (g/dL)</label>
+                    <input type="number" name="total_proteins" id="total_proteins" required step="0.1" min="0" placeholder="e.g., 7.2">
+                </div>
+
+                <div class="form-group">
+                    <label for="albumin">🟠 Albumin (g/dL)</label>
+                    <input type="number" name="albumin" id="albumin" required step="0.1" min="0" placeholder="e.g., 4.1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="albumin_globulin_ratio">📊 Albumin/Globulin Ratio</label>
+                    <input type="number" name="albumin_globulin_ratio" id="albumin_globulin_ratio" required step="0.1" min="0" placeholder="e.g., 1.2">
+                </div>
+            </div>
+
+            <div class="submit-container">
+                <button class="submit-btn" type="submit">
+                    🔍 Analyze & Predict
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('medicalForm');
+        const progressFill = document.getElementById('progressFill');
+        const inputs = form.querySelectorAll('input[required], select[required]');
+        
+        function updateProgress() {
+            const filledInputs = Array.from(inputs).filter(input => {
+                return input.value.trim() !== '';
+            });
+            const progress = (filledInputs.length / inputs.length) * 100;
+            progressFill.style.width = progress + '%';
+        }
+        
+        inputs.forEach(input => {
+            input.addEventListener('input', updateProgress);
+            input.addEventListener('change', updateProgress);
+        });
+
+        // Initialize progress on page load
+        updateProgress();
+    });
+</script>
+{% endblock %}

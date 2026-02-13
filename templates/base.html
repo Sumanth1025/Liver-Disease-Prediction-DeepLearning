@@ -1,0 +1,233 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Liver Health Analytics</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏥</text></svg>">
+    
+    <style>
+        /* CSS Variables for theming */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #4f46e5, #7c3aed);
+            --success-gradient: linear-gradient(135deg, #10b981, #059669);
+            --error-gradient: linear-gradient(135deg, #ef4444, #dc2626);
+            
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.1);
+            --shadow-medium: 0 15px 35px rgba(31, 38, 135, 0.15);
+            
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            
+            --border-radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Base and Body Styles */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary-gradient);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Modern Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: var(--shadow-light);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        /* Main Content Area */
+        .main-content {
+            margin-top: 100px; /* Space for fixed navbar */
+            min-height: calc(100vh - 250px); /* Adjust based on navbar and footer height */
+            padding: 20px;
+        }
+        
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1100;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .flash-message {
+            padding: 16px 20px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-medium);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .flash-message.success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+        .flash-message.error {
+            background: rgba(239, 68, 68, 0.15);
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+        .flash-icon { font-size: 20px; font-weight: bold; }
+        .flash-content { flex: 1; }
+        .flash-title { font-weight: 600; font-size: 0.95rem; }
+        .flash-text { font-size: 0.9rem; }
+        .flash-close { cursor: pointer; opacity: 0.6; font-size: 18px; font-weight: bold; }
+        .flash-close:hover { opacity: 1; }
+        
+        /* Footer */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 40px 20px 20px;
+            text-align: center;
+        }
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="brand-logo">
+                <div class="brand-icon">🏥</div>
+                <span>MedAnalytics Pro</span>
+            </a>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">
+                        <div class="flash-icon">
+                            {% if category == 'success' %}✓
+                            {% elif category == 'error' %}!
+                            {% else %}ℹ
+                            {% endif %}
+                        </div>
+                        <div class="flash-content">
+                            <div class="flash-title">{{ category|capitalize }}</div>
+                            <div class="flash-text">{{ message }}</div>
+                        </div>
+                        <div class="flash-close" onclick="this.parentElement.style.display='none'">&times;</div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <p class="footer-copyright">
+            © 2025 MedAnalytics Pro. All rights reserved.
+        </p>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Auto-hide flash messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('.flash-message');
+            flashMessages.forEach(message => {
+                setTimeout(() => {
+                    // Fade out animation
+                    message.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    message.style.opacity = '0';
+                    message.style.transform = 'translateX(100%)';
+                    setTimeout(() => message.remove(), 500); // Remove from DOM after fade
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
